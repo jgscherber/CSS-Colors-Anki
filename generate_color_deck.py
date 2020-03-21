@@ -90,8 +90,8 @@ for colorOption in colorOptions:
 
 #-------------------------------------------------------------
 # Word with varied options :: Color
-word_with_options_id = random.randrange(1 << 30, 1 << 31)
-word_with_options_styling = """
+word_with_varied_id = random.randrange(1 << 30, 1 << 31)
+word_with_varied_styling = """
 .color{
   background: #808080;
   padding: 10px;
@@ -118,8 +118,8 @@ img{
 }
 """
 
-word_with_options = genki.Model(
-    word_with_options_id,
+word_with_varied = genki.Model(
+    word_with_varied_id,
     'Color (varied options) :: Word',
     fields=[
         {'name': colorName_fld},
@@ -136,14 +136,14 @@ word_with_options = genki.Model(
                     '<div class="color">{{' + colorImage_fld + '}}</div>',
         }
     ],
-    css=word_with_options_styling
+    css=word_with_varied_styling
     )
 
 for colorOption in colorOptions:
     options = helpers.getFiveRandom(colorOption, colorOptions)
     tags = ''.join([ x.formatToImageTag('multiple') for x in options ])
     note = genki.Note(
-        model=word_with_options,
+        model=word_with_varied,
         fields=[
             colorOption.getColorName(),
             tags,
@@ -154,11 +154,8 @@ for colorOption in colorOptions:
 
 #-------------------------------------------------------------
 # Word with similar color options :: Color
-
-#-------------------------------------------------------------
-# Word with no color options :: Color
-word_color_id = random.randrange(1 << 30, 1 << 31)
-word_color_styling = """
+word_with_similar_id = random.randrange(1 << 30, 1 << 31)
+word_with_similar_styling = """
 .color{
   background: #808080;
   padding: 10px;
@@ -170,6 +167,13 @@ word_color_styling = """
   padding: 10px;
 }
 
+img.multiple{
+  display: inline;
+  margin-left: auto;
+  margin-right: auto;
+  width: 33%;
+}
+
 img{
   display: block;
   margin-left: auto;
@@ -177,6 +181,49 @@ img{
   width: 40%;
 }
 """
+
+word_with_similar = genki.Model(
+    word_with_similar_id,
+    'Color (similar options) :: Word',
+    fields=[
+        {'name': colorName_fld},
+        {'name': colorImages_fld},
+        {'name': colorImage_fld}
+    ],
+    templates=[
+        {
+            'name': 'Main',
+            'qfmt': '<div class="name"> {{' + colorName_fld + '}} </div>' +
+                    '\n<div class="color">{{' + colorImages_fld + '}}</div>',
+            'afmt': '<div class="name"> {{' + colorName_fld + '}} </div>' +
+                    '<hr id="answer" />' + 
+                    '<div class="color">{{' + colorImage_fld + '}}</div>',
+        }
+    ],
+    css=word_with_similar_styling
+    )
+
+for colorOption in colorOptions:
+    # create 3 cards for each, left-middle-center variaties
+    for i in range(3):
+        options = helpers.getThree(colorOption, sortedColorOptions, i)
+        if options == None:
+            continue
+        tags = ''.join([ x.formatToImageTag('multiple') for x in options ])
+        note = genki.Note(
+            model=word_with_similar,
+            fields=[
+                colorOption.getColorName(),
+                tags,
+                colorOption.formatToImageTag()
+            ])
+
+        my_deck.add_note(note)
+
+#-------------------------------------------------------------
+# Word with no color options :: Color
+word_color_id = random.randrange(1 << 30, 1 << 31)
+# word_color_styling - same styling can be applied
 
 word_color = genki.Model(
     word_color_id,
@@ -205,6 +252,7 @@ for colorOption in colorOptions:
 
     my_deck.add_note(note)
 
+#-------------------------------------------------------------
 # Package
 colorPaths = []
 for colorOption in colorOptions:

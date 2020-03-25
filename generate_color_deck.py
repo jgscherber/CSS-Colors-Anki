@@ -31,6 +31,7 @@ sortedColorOptions = sorted(colorOptions, key=lambda x: x.Hue)
 colorImage_fld = 'Color Image'
 colorImages_fld = 'Color Images'
 colorName_fld = 'Color Name'
+colorParts_fld = 'Color Parts'
 
 deck_id = random.randrange(1 << 30, 1 << 31)
 my_deck = genki.Deck(
@@ -53,6 +54,10 @@ color_word_styling = """
   padding: 10px;
 }
 
+.parts{
+  text-align: center;
+}
+
 img{
   display: block;
   margin-left: auto;
@@ -65,14 +70,16 @@ color_word = genki.Model(
     color_word_id,
     'Color :: Word',
     fields=[
-        {'name': colorImage_fld},
-        {'name': colorName_fld}
+        { 'name': colorImage_fld },
+        { 'name': colorName_fld },
+        { 'name': colorParts_fld },
     ],
     templates=[
         {
             'name': 'Main',
             'qfmt': '<div class="color">{{' + colorImage_fld + '}} </div>',
-            'afmt': '{{FrontSide}} <hr id="answer" /> <div class="name"> {{' + colorName_fld + '}} </div>'
+            'afmt': '{{FrontSide}} <hr id="answer" /> <div class="name"> {{' + colorName_fld + '}} </div>' +
+                    '<br /> <div class="parts"> {{' + colorParts_fld + '}} </div>'
         }
     ],
     css=color_word_styling
@@ -83,7 +90,8 @@ for colorOption in colorOptions:
         model=color_word,
         fields=[
             colorOption.formatToImageTag(),
-            colorOption.getColorName()           
+            colorOption.ColorName,
+            colorOption.formatToCmykValues(),
         ])
 
     my_deck.add_note(note)
@@ -101,6 +109,10 @@ word_with_varied_styling = """
   text-align: center;
   font-size: 2em;
   padding: 10px;
+}
+
+.parts{
+  text-align: center;
 }
 
 img.multiple{
@@ -124,7 +136,8 @@ word_with_varied = genki.Model(
     fields=[
         {'name': colorName_fld},
         {'name': colorImages_fld},
-        {'name': colorImage_fld}
+        {'name': colorImage_fld},
+        {'name': colorParts_fld},
     ],
     templates=[
         {
@@ -133,7 +146,8 @@ word_with_varied = genki.Model(
                     '\n<div class="color">{{' + colorImages_fld + '}}</div>',
             'afmt': '<div class="name"> {{' + colorName_fld + '}} </div>' +
                     '<hr id="answer" />' + 
-                    '<div class="color">{{' + colorImage_fld + '}}</div>',
+                    '<div class="color">{{' + colorImage_fld + '}}</div>' +
+                    '<br /> <div class="parts"> {{' + colorParts_fld + '}} </div>',
         }
     ],
     css=word_with_varied_styling
@@ -145,9 +159,10 @@ for colorOption in colorOptions:
     note = genki.Note(
         model=word_with_varied,
         fields=[
-            colorOption.getColorName(),
+            colorOption.ColorName,
             tags,
-            colorOption.formatToImageTag()
+            colorOption.formatToImageTag(),
+            colorOption.formatToCmykValues(),
         ])
 
     my_deck.add_note(note)
@@ -165,6 +180,10 @@ word_with_similar_styling = """
   text-align: center;
   font-size: 2em;
   padding: 10px;
+}
+
+.parts{
+  text-align: center;
 }
 
 img.multiple{
@@ -188,7 +207,8 @@ word_with_similar = genki.Model(
     fields=[
         {'name': colorName_fld},
         {'name': colorImages_fld},
-        {'name': colorImage_fld}
+        {'name': colorImage_fld},
+        {'name': colorParts_fld},
     ],
     templates=[
         {
@@ -197,7 +217,8 @@ word_with_similar = genki.Model(
                     '\n<div class="color">{{' + colorImages_fld + '}}</div>',
             'afmt': '<div class="name"> {{' + colorName_fld + '}} </div>' +
                     '<hr id="answer" />' + 
-                    '<div class="color">{{' + colorImage_fld + '}}</div>',
+                    '<div class="color">{{' + colorImage_fld + '}}</div>' +
+                    '<br /> <div class="parts"> {{' + colorParts_fld + '}} </div>',
         }
     ],
     css=word_with_similar_styling
@@ -213,9 +234,10 @@ for colorOption in colorOptions:
         note = genki.Note(
             model=word_with_similar,
             fields=[
-                colorOption.getColorName(),
+                colorOption.ColorName,
                 tags,
-                colorOption.formatToImageTag()
+                colorOption.formatToImageTag(),
+                colorOption.formatToCmykValues(),
             ])
 
         my_deck.add_note(note)
@@ -230,13 +252,15 @@ word_color = genki.Model(
     'Word :: Color',
     fields=[
         {'name': colorName_fld},
-        {'name': colorImage_fld}
+        {'name': colorImage_fld},
+        {'name': colorParts_fld},
     ],
     templates=[
         {
             'name': 'Main',
             'qfmt': '<div class="name"> {{' + colorName_fld + '}} </div>',
-            'afmt': '{{FrontSide}} <hr id="answer" /> <div class="color">{{' + colorImage_fld + '}} </div>',
+            'afmt': '{{FrontSide}} <hr id="answer" /> <div class="color">{{' + colorImage_fld + '}} </div>' +
+                    '<br /> <div class="parts"> {{' + colorParts_fld + '}} </div>',
         }
     ],
     css=color_word_styling
@@ -246,8 +270,9 @@ for colorOption in colorOptions:
     note = genki.Note(
         model=word_color,
         fields=[
-            colorOption.getColorName(),
-            colorOption.formatToImageTag()
+            colorOption.ColorName,
+            colorOption.formatToImageTag(),
+            colorOption.formatToCmykValues(),
         ])
 
     my_deck.add_note(note)
